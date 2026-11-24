@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gemini Canvas</title>
+
+  <!-- WhatsApp / Social Preview Tags (static) -->
+  <meta property="og:title" content="Gemini Canvas - Dashboard Tools">
+  <meta property="og:description" content="Open Gemini dashboard tools directly.">
+  <meta property="og:url" content="https://apni-website.com/">
+  <meta property="og:image" content="https://www.gstatic.com/lamda/images/gemini_sparkle_v002_d4735304ff6292a690345.svg">
+  <meta property="og:type" content="website">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+      background: #f8fafc;
+      padding: 2rem 1.5rem;
+      color: #0f172a;
+    }
+    header { max-width: 1200px; margin: 0 auto 0.5rem auto; }
+    h1 { font-size: 2.2rem; font-weight: 600; color: #1e293b; }
+    hr { max-width: 1200px; margin: 0 auto 2rem auto; border: 0; height: 2px; background: #e2e8f0; }
+    .items { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.8rem; }
+    .item { background: #fff; border-radius: 1.25rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); overflow: hidden; border: 1px solid #f1f5f9; position: relative; transition: transform 0.2s, box-shadow 0.2s; }
+    .item:hover { transform: translateY(-4px); box-shadow: 0 20px 30px -10px rgba(0,0,0,0.1); }
+    .item img { width: 100%; height: 160px; object-fit: cover; display: block; background: #f1f5f9; }
+    .item h3 { font-size: 1.25rem; font-weight: 600; margin: 1rem 1rem 0.5rem; }
+    .item a.open-tool { display: inline-block; margin: 0 1rem 1.25rem; color: #2563eb; text-decoration: none; position: relative; z-index: 2; font-weight: 500; }
+    .item a.open-tool:hover { border-bottom: 1px solid #2563eb; }
+    .item a.card-link { position: absolute; inset: 0; z-index: 1; }
+    .loading, .error { text-align: center; padding: 2rem; color: #64748b; }
+  </style>
+</head>
+<body>
+  <header><h1 id="siteTitle">Gemini Canvas</h1></header>
+  <hr>
+  <div class="items" id="itemsContainer">
+    <p class="loading">Loading tools...</p>
+  </div>
+
+  <script>
+    async function loadTools() {
+      const container = document.getElementById('itemsContainer');
+      try {
+        const res = await fetch('data.json');
+        if (!res.ok) throw new Error('data.json not found');
+        const data = await res.json();
+
+        // Site title bhi JSON se set karein
+        if (data.siteTitle) document.getElementById('siteTitle').textContent = data.siteTitle;
+
+        // Cards render karein
+        container.innerHTML = data.items.map(item => `
+          <div class="item">
+            <a class="card-link" href="${item.link}" target="_blank" aria-label="${item.title}"></a>
+            <img src="${item.image}" alt="${item.title}">
+            <h3>${item.title}</h3>
+            <a class="open-tool" href="${item.link}" target="_blank">Open Tool</a>
+          </div>
+        `).join('');
+      } catch (err) {
+        container.innerHTML = `<p class="error">Tools load nahi ho sake: ${err.message}</p>`;
+        console.error(err);
+      }
+    }
+    loadTools();
+  </script>
+</body>
+</html>
