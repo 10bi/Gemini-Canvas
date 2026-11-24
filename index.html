@@ -62,8 +62,7 @@
           </div>
         `).join('');
       } catch (err) {
-        container.innerHTML = `<p class="error">Tools load nahi ho sake: ${err.message}</p>`;
-        console.error(err);
+        container.innerHTML = `<p class="error">Tools is not load: ${err.message}</p>`;
       }
     }
     loadTools();
